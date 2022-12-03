@@ -1,4 +1,6 @@
 import math, random
+from board import Board
+from constants import *
 
 """
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal
@@ -25,7 +27,7 @@ class SudokuGenerator:
     def __init__(self, row_length, removed_cells):
       self.row_length = row_length
       self.removed_cells = removed_cells
-      self.board = [[]] # an empty list for now, may need to be changed
+      self.board = [[]]
       self.box_length = math.sqrt(row_length)
 
     '''
