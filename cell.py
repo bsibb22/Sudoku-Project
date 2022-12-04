@@ -1,17 +1,22 @@
+from constants import *
+import pygame
+
 class Cell:
   def __init__(self, value, row, col, screen):
-    self.value = ''
-    self.row = ''
-    self.col = ''
-    self.screen = ''
-
+    self.value = value
+    self.row = row
+    self.col = col
+    self.screen = screen
     self.sketched_value = 0
 
   def set_cell_value(self, value):
-    return
+    self.value = value
 
   def Set_sketched_value(self, value):
-    return
+    self.sketched_value = value
     
   def draw(self):
-    return
+    if self.value != 0:
+      return self.value
+    else:
+      return None
