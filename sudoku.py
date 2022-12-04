@@ -51,13 +51,29 @@ def draw_game_start(screen):
     screen.blit(medium_surface,medium_rectangle)
     screen.blit(hard_surface,hard_rectangle)
 
-#                                        v later scale based on difficulty
+    while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if easy_rectangle.collidepoint(event.pos): #depending on diffuculty selected the board will be generated differently
+                return "easy"
+            elif medium_rectangle.collidepoint(event.pos):
+                return "medium"
+            elif hard_rectangle.collidepoint(event.pos):
+                return "diffucult"
+
+        pygame.display.update()
+
+
+#  v later scale based on difficulty
 generator = SudokuGenerator(BOARD_SIZE, 10)
 generator.board = Board(BOARD_WIDTH, BOARD_HEIGHT, screen, "easy", BOARD_SIZE)
 
 
 if __name__ == "__main__":
 #area to initalize variables if needed
+  winner_status = 0
 
   
   while True:
