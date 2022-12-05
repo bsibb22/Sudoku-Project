@@ -143,13 +143,22 @@ generator.board = Board(BOARD_WIDTH, BOARD_HEIGHT, screen, "easy", BOARD_SIZE)
 if __name__ == "__main__":
     # area to initalize variables if needed
     winner_status = 0
+    board = generator.board
 
     while True:
         screen.fill(BACKGROUND_COLOR)
 
-        generator.board.draw()
+        board.draw()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+            if event.type == pygame.MOUSEBUTTONUP:
+              mouse_pos = pygame.mouse.get_pos()
+              board.click(mouse_pos[0], mouse_pos[1])
+
+              if board.click(mouse_pos[0], mouse_pos[1]) is not None:
+                clicked_cell = board.click(mouse_pos[0], mouse_pos[1])
+                # board.select() takes the cell's ROW as its first argument
+                board.select(clicked_cell[1], clicked_cell[0])
 
         pygame.display.update()

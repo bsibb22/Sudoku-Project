@@ -49,15 +49,19 @@ class Board:
             self.cells[i][j].draw()
 
   def select(self, row, col):
+    if self.selected_cell is not None:
+      self.selected_cell.selected = False
     self.selected_cell = self.cells[row][col]
+    self.selected_cell.selected = True
 
   # Returns None if the click is outside the board, otherwise returns a tuple
   # of the form (x, y) with the column and row of the clicked cell
   def click(self, x, y):
     if x > self.top_left_corner[0] and x < self.top_left_corner[0] + self.width \
       and y > self.top_left_corner[1] and y < self.top_left_corner[1] + self.height:
-        return (x // CELL_WIDTH, y // CELL_HEIGHT)
+        return int((x - self.top_left_corner[0]) // CELL_WIDTH), int((y - self.top_left_corner[1]) // CELL_HEIGHT)
     else:
+      print("Click not on board!!!!!!")
       return None
 
   def clear(self):
@@ -81,9 +85,11 @@ class Board:
     pass
 
   def is_full(self):
-    for cell in self.cells:
-      if cell.value == 0:
-        return False
+    for row in range(len(self.cells)):
+      for col in range(len(self.cells[row])):
+        cell = self.cells[row][col]
+        if cell.value == 0:
+          return False
     return True
 
   def update_board(self):

@@ -22,7 +22,7 @@ class Cell:
     def draw(self):
         if not self.value == 0:
             value_font = pygame.font.Font(None, 60)
-            value_surf = value_font.render(str(self.value), 0, (0, 0, 0))
+            value_surf = value_font.render(str(self.value), 0, SELECTED_COLOR if self.selected else (0, 0, 0))
             value_rect = value_surf.get_rect(
                 center=(
                     CELL_WIDTH * self.col + CELL_WIDTH // 2 + self.tl_corner[0],
