@@ -9,68 +9,95 @@ class Board:
     self.screen = screen
     self.difficulty = difficulty
     self.cells = []
+    self.matrix = [[]]
 
     self.board_size = board_size
+
+    self.top_left_corner = (SCREEN_WIDTH / 2 - self.width / 2, SCREEN_HEIGHT / 2 - self.height / 2)
+
+    self.selected_cell = None
 
     # add all the cells; where to change cell's values?
     for row in range(self.board_size):
       row_to_add = []
-      for col in range(self.board_size):
-        row_to_add.append(Cell(0, row, col, self.screen))
+      matrix_row_to_add = []
+      for col in range(0, self.board_size):
+        row_to_add.append(Cell(int(pow(row * col, 0.5)), row, col, self.screen, self.top_left_corner))
+        matrix_row_to_add.append(0)
       self.cells.append(row_to_add)
+      self.matrix.append(matrix_row_to_add)
 
   def draw(self):
-    cell_width = BOARD_WIDTH / self.board_size
-    cell_height = BOARD_HEIGHT / self.board_size
-
-    top_left_corner = (SCREEN_WIDTH / 2 - self.width / 2, SCREEN_HEIGHT / 2 - self.height / 2)
-
-    for i in range(self.board_size + 1):
+    for line in range(self.board_size + 1):
         pygame.draw.line(
             self.screen,
             LINE_COLOR,
-            (top_left_corner[0] + cell_width * i, top_left_corner[1]),
-            (top_left_corner[0] + cell_width * i, top_left_corner[1] + self.height),
-            6 if i % 3 == 0 else 3
+            (self.top_left_corner[0] + CELL_WIDTH * line, self.top_left_corner[1]),
+            (self.top_left_corner[0] + CELL_WIDTH * line, self.top_left_corner[1] + self.height),
+            6 if line % 3 == 0 else 3
         )
         pygame.draw.line(
             self.screen,
             LINE_COLOR,
-            (top_left_corner[0], top_left_corner[1] + cell_height * i),
-            (top_left_corner[0] + self.width, top_left_corner[1] + cell_height * i),
-            6 if i % 3 == 0 else 3
+            (self.top_left_corner[0], self.top_left_corner[1] + CELL_HEIGHT * line),
+            (self.top_left_corner[0] + self.width, self.top_left_corner[1] + CELL_HEIGHT * line),
+            6 if line % 3 == 0 else 3
         )
+
+    for i in range(len(self.cells)):
+        for j in range(len(self.cells[i])):
+            self.cells[i][j].draw()
 
   def select(self, row, col):
-    pass
+    self.selected_cell = self.cells[row][col]
 
+  # Returns None if the click is outside the board, otherwise returns a tuple
+  # of the form (x, y) with the column and row of the clicked cell
   def click(self, x, y):
-    """
-    if x > board_x and x < board_x + board_width and y > board_y and y < board_y + board_height:
-      return x // cell_width, y // cell_height
-    """
-    pass
+    if x > self.top_left_corner[0] and x < self.top_left_corner[0] + self.width \
+      and y > self.top_left_corner[1] and y < self.top_left_corner[1] + self.height:
+        return (x // CELL_WIDTH, y // CELL_HEIGHT)
+    else:
+      return None
 
   def clear(self):
+    # TODO: how to differentiate between user-inputted values and
+    # predetermined values?
     pass
 
   def sketch(self, value):
-    pass
+    if self.selected_cell is not None:
+      self.selected_cell.set_sketched_value(value)
+    else:
+      print("Error: no cell selected!")
 
   def place_number(self, value):
-    pass
+    if self.selected_cell is None:
+      print("Error: no cell selected!")
+    else:
+      self.selected_cell.set_cell_value(value)
 
   def reset_to_original(self):
     pass
 
   def is_full(self):
-    pass
+    for cell in self.cells:
+      if cell.value == 0:
+        return False
+    return True
 
   def update_board(self):
-    pass
+    for row in range(len(self.cells)):
+      for col in range(len(self.cells[row])):
+        self.matrix[row][col] = self.cells[row][col].value
 
   def find_empty(self):
-    pass
+    for row in range(len(self.cells)):
+      for col in range(len(self.cells[row])):
+        cell = self.cells[row][col]
+        if cell.value == 0:
+          return (cell.col, cell.row)
+    print("No empty cells found!")
 
   def check_board(self):
     pass
