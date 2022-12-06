@@ -108,7 +108,7 @@ def draw_game_lost(screen):
 
     screen.fill(BACKGROUND_COLOR)
 
-    title_surface = end_title_font.render("Game Over:(", 0, LINE_COLOR)
+    title_surface = end_title_font.render("Game Over :(", 0, LINE_COLOR)
     title_rectangle = title_surface.get_rect(
         center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 200))
     screen.blit(title_surface, title_rectangle)
@@ -136,29 +136,65 @@ def draw_game_lost(screen):
             pygame.display.update()
 
 
-#  v later scale based on difficulty
-generator = SudokuGenerator(BOARD_SIZE, 10)
-generator.board = Board(BOARD_WIDTH, BOARD_HEIGHT, screen, "easy", BOARD_SIZE)
 
 if __name__ == "__main__":
     # area to initalize variables if needed
     winner_status = 0
+    diffuculty = draw_game_start(screen)
+
+    generator = SudokuGenerator(BOARD_SIZE, 10)
+    generator.board = Board(BOARD_WIDTH, BOARD_HEIGHT, screen, diffuculty, BOARD_SIZE)
     board = generator.board
 
     while True:
         screen.fill(BACKGROUND_COLOR)
 
         board.draw()
+        button_font = pygame.font.Font(None, 60)
+
+        reset_text = button_font.render("Reset", 0, (255, 255, 255))
+        restart_text = button_font.render("Restart", 0, (255, 255, 255))
+        exit_text = button_font.render("Exit", 0, (255, 255, 255))
+
+        reset_surface = pygame.Surface((reset_text.get_size()[0] + 20, reset_text.get_size()[1] + 20))
+        reset_surface.fill(LINE_COLOR)
+        reset_surface.blit(reset_text, (10, 10))
+
+        restart_surface = pygame.Surface((restart_text.get_size()[0] + 20, restart_text.get_size()[1] + 20))
+        restart_surface.fill(LINE_COLOR)
+        restart_surface.blit(restart_text, (10, 10))
+
+        exit_surface = pygame.Surface((exit_text.get_size()[0] + 20, exit_text.get_size()[1] + 20))
+        exit_surface.fill(LINE_COLOR)
+        exit_surface.blit(exit_text, (10, 10))
+
+        reset_rectangle = reset_surface.get_rect(
+            center=(SCREEN_WIDTH // 2 - 250, SCREEN_WIDTH // 2 + 350))
+        restart_rectangle = restart_surface.get_rect(
+            center=(SCREEN_WIDTH // 2, SCREEN_WIDTH // 2 + 350))
+        exit_rectangle = exit_surface.get_rect(
+            center=(SCREEN_WIDTH // 2 + 250, SCREEN_WIDTH // 2 + 350))
+
+        screen.blit(reset_surface, reset_rectangle)
+        screen.blit(restart_surface, restart_rectangle)
+        screen.blit(exit_surface, exit_rectangle)
+      
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
             if event.type == pygame.MOUSEBUTTONUP:
               mouse_pos = pygame.mouse.get_pos()
               board.click(mouse_pos[0], mouse_pos[1])
-
               if board.click(mouse_pos[0], mouse_pos[1]) is not None:
                 clicked_cell = board.click(mouse_pos[0], mouse_pos[1])
                 # board.select() takes the cell's ROW as its first argument
                 board.select(clicked_cell[1], clicked_cell[0])
+            elif event.type == pygame.MOUSEBUTTONDOWN:   #checks for user action regarding the three bottom buttons
+                if exit_rectangle.collidepoint(event.pos):  #user can either exit program, restart the program to start screen, or reset the sudoku game board to its inital state
+                    pygame.quit()
+                elif restart_rectangle.collidepoint(event.pos):
+                    draw_game_start(screen)
+                elif reset_rectangle.collidepoint(event.pos):
+                    pass
 
         pygame.display.update()
